@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dublin Coin Clicker</title>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; }
+        #coin { font-size: 48px; cursor: pointer; }
+        #balance { font-size: 24px; margin-top: 20px; }
+    </style>
+    <script>
+        let balance = 0;
+        function mineCoin() {
+            balance += 10;
+            document.getElementById('balance').innerText = `Баланс: ${balance} Dublin Coin`;
+        }
+    </script>
+</head>
+<body>
+    <h1>Dublin Coin Clicker</h1>
+    <div id="coin" onclick="mineCoin()">🪙</div>
+    <div id="balance">Баланс: 0 Dublin Coin</div>
+</body>
+</html>
