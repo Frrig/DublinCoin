@@ -13,13 +13,12 @@
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
-            background: url('https://your-background-image-url.com/background.jpg') no-repeat center center fixed;
-            background-size: cover;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: #fff;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
         #balance {
-            font-size: 56px;
+            font-size: 64px;
             margin-top: 20px;
             color: #ffd700;
             text-align: center;
@@ -40,8 +39,8 @@
             transform: scale(0.9);
         }
         #upgrade {
-            font-size: 24px;
-            padding: 15px 25px;
+            font-size: 18px;
+            padding: 10px 20px;
             margin: 20px;
             background-color: #ffd700;
             color: #fff;
@@ -59,13 +58,29 @@
         }
     </style>
     <script>
+        let userId;
         let balance = 0;
         let miningPower = 10;
         let upgradeCost = 100;
 
+        async function initUser() {
+            const response = await fetch(`/get_user_data`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user_id: userId })
+            });
+            const data = await response.json();
+            balance = data.balance;
+            miningPower = data.mining_power;
+            updateDisplay();
+        }
+
         function mineCoin() {
             balance += miningPower;
-            document.getElementById('balance').innerText = `${balance} DC`;
+            updateDisplay();
+            saveData();
         }
 
         function upgradeClicker() {
@@ -73,12 +88,39 @@
                 balance -= upgradeCost;
                 miningPower += 10;
                 upgradeCost *= 2;
-                document.getElementById('balance').innerText = `${balance} DC`;
-                document.getElementById('upgrade').innerText = `Улучшить кликер (Стоимость: ${upgradeCost} DC)`;
+                updateDisplay();
+                saveData();
             } else {
                 alert('Недостаточно монет для улучшения!');
             }
         }
+
+        function updateDisplay() {
+            document.getElementById('balance').innerText = `${balance} DC`;
+            document.getElementById('upgrade').innerText = `Улучшить кликер (Стоимость: ${upgradeCost} DC)`;
+        }
+
+        async function saveData() {
+            const data = { user_id: userId, balance: balance, mining_power: miningPower };
+            await fetch(`/save_data`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+        }
+
+        window.Telegram.WebApp.onEvent('mainButtonClicked', function() {
+            saveData();
+            window.Telegram.WebApp.close();
+        });
+
+        window.Telegram.WebApp.ready();
+        Telegram.WebApp.onEvent('dataReceived', (initData) => {
+            userId = initData.user_id;
+            initUser();
+        });
     </script>
 </head>
 <body>
