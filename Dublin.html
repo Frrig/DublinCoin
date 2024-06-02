@@ -33,4 +33,54 @@
 
         // Получение данных пользователя из базы данных
         fetch(`/get_user?user_id=${userId}`)
-            .then(response => response.
+            .then(response => response.json())
+            .then(data => {
+                balance = data.balance;
+                miningLevel = data.mining_level;
+                level = data.level;
+                updateUI();
+            });
+
+        // Обновление интерфейса
+        function updateUI() {
+            document.getElementById('balance').textContent = balance;
+            document.getElementById('level').textContent = level;
+            document.getElementById('upgrade-cost').textContent = 2 ** (miningLevel - 1);
+        }
+
+        // Обработчик клика по кликеру
+        document.getElementById('clicker').addEventListener('click', () => {
+            balance += miningLevel;
+            updateUI();
+            saveUser();
+        });
+
+        // Обработчик клика по кнопке улучшения
+        document.getElementById('upgrade-button').addEventListener('click', () => {
+            const upgradeCost = 2 ** (miningLevel - 1);
+            if (balance >= upgradeCost) {
+                balance -= upgradeCost;
+                miningLevel++;
+                updateUI();
+                saveUser();
+            }
+        });
+
+        // Сохранение данных пользователя в базе данных
+        function saveUser() {
+            fetch('/save_user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user_id: userId,
+                    balance: balance,
+                    mining_level: miningLevel,
+                    level: level
+                })
+            });
+        }
+    </script>
+</body>
+</html>
