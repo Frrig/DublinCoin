@@ -9,43 +9,53 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #2980b9, #6dd5fa, #ffffff);
+            background: url('https://your-background-image-url.com/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
-        h1 {
-            font-size: 36px;
-            color: #2c3e50;
-            margin-bottom: 20px;
+        #balance {
+            font-size: 56px;
+            margin-top: 20px;
+            color: #ffd700;
+            text-align: center;
+        }
+        #coin-container {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         #coin {
-            font-size: 100px;
+            max-width: 80%;
+            height: auto;
             cursor: pointer;
             transition: transform 0.1s;
         }
         #coin:active {
             transform: scale(0.9);
         }
-        #balance {
-            font-size: 24px;
-            margin-top: 20px;
-            color: #2c3e50;
-        }
         #upgrade {
-            font-size: 18px;
-            padding: 10px 20px;
-            margin-top: 20px;
-            background-color: #3498db;
-            color: white;
+            font-size: 24px;
+            padding: 15px 25px;
+            margin: 20px;
+            background-color: #ffd700;
+            color: #fff;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
         }
         #upgrade:hover {
-            background-color: #2980b9;
+            background-color: #e5c100;
+        }
+        button:focus {
+            outline: none;
         }
     </style>
     <script>
@@ -55,7 +65,7 @@
 
         function mineCoin() {
             balance += miningPower;
-            document.getElementById('balance').innerText = `Баланс: ${balance} Dublin Coin`;
+            document.getElementById('balance').innerText = `${balance} DC`;
         }
 
         function upgradeClicker() {
@@ -63,7 +73,7 @@
                 balance -= upgradeCost;
                 miningPower += 10;
                 upgradeCost *= 2;
-                document.getElementById('balance').innerText = `Баланс: ${balance} Dublin Coin`;
+                document.getElementById('balance').innerText = `${balance} DC`;
                 document.getElementById('upgrade').innerText = `Улучшить кликер (Стоимость: ${upgradeCost} DC)`;
             } else {
                 alert('Недостаточно монет для улучшения!');
@@ -72,9 +82,10 @@
     </script>
 </head>
 <body>
-    <h1>Dublin Coin Clicker</h1>
-    <div id="coin" onclick="mineCoin()">🪙</div>
-    <div id="balance">Баланс: 0 Dublin Coin</div>
+    <div id="balance">0 DC</div>
+    <div id="coin-container">
+        <img id="coin" src="https://your-image-url.com/coin.png" alt="coin" onclick="mineCoin()">
+    </div>
     <button id="upgrade" onclick="upgradeClicker()">Улучшить кликер (Стоимость: 100 DC)</button>
 </body>
 </html>
