@@ -1,133 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dublin Coin Clicker</title>
     <style>
         body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            height: 100vh;
-            margin: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: #fff;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-        #balance {
-            font-size: 64px;
-            margin-top: 20px;
-            color: #ffd700;
             text-align: center;
         }
-        #coin-container {
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        #coin {
-            max-width: 80%;
-            height: auto;
+        #clicker {
+            width: 200px;
+            height: 200px;
+            background-image: url('clicker.png');
+            background-size: cover;
+            margin: 20px auto;
             cursor: pointer;
-            transition: transform 0.1s;
-        }
-        #coin:active {
-            transform: scale(0.9);
-        }
-        #upgrade {
-            font-size: 18px;
-            padding: 10px 20px;
-            margin: 20px;
-            background-color: #ffd700;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
-        }
-        #upgrade:hover {
-            background-color: #e5c100;
-        }
-        button:focus {
-            outline: none;
         }
     </style>
-    <script>
-        let userId;
-        let balance = 0;
-        let miningPower = 10;
-        let upgradeCost = 100;
-
-        async function initUser() {
-            const response = await fetch(`/get_user_data`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ user_id: userId })
-            });
-            const data = await response.json();
-            balance = data.balance;
-            miningPower = data.mining_power;
-            updateDisplay();
-        }
-
-        function mineCoin() {
-            balance += miningPower;
-            updateDisplay();
-            saveData();
-        }
-
-        function upgradeClicker() {
-            if (balance >= upgradeCost) {
-                balance -= upgradeCost;
-                miningPower += 10;
-                upgradeCost *= 2;
-                updateDisplay();
-                saveData();
-            } else {
-                alert('Недостаточно монет для улучшения!');
-            }
-        }
-
-        function updateDisplay() {
-            document.getElementById('balance').innerText = `${balance} DC`;
-            document.getElementById('upgrade').innerText = `Улучшить кликер (Стоимость: ${upgradeCost} DC)`;
-        }
-
-        async function saveData() {
-            const data = { user_id: userId, balance: balance, mining_power: miningPower };
-            await fetch(`/save_data`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-        }
-
-        window.Telegram.WebApp.onEvent('mainButtonClicked', function() {
-            saveData();
-            window.Telegram.WebApp.close();
-        });
-
-        window.Telegram.WebApp.ready();
-        Telegram.WebApp.onEvent('dataReceived', (initData) => {
-            userId = initData.user_id;
-            initUser();
-        });
-    </script>
 </head>
 <body>
-    <div id="balance">0 DC</div>
-    <div id="coin-container">
-        <img id="coin" src="SWSEF.png" alt="coin" onclick="mineCoin()">
-    </div>
-    <button id="upgrade" onclick="upgradeClicker()">Улучшить кликер (Стоимость: 100 DC)</button>
-</body>
-</html>
+    <h1>Dublin Coin Clicker</h1>
+    <p>Баланс: <span id="balance">0</span> Dublin Coins</p>
+    <p>Уровень: <span id="level">1</span></p>
+    <div id="clicker"></div>
+    <p>Улучшение добычи: <span id="upgrade-cost">2</span> Dublin Coins</p>
+    <button id="upgrade-button">Улучшить</button>
+
+    <script>
+        const userId = new URLSearchParams(window.location.search).get('user_id');
+        let balance = 0;
+        let miningLevel = 1;
+        let level = 1;
+
+        // Получение данных пользователя из базы данных
+        fetch(`/get_user?user_id=${userId}`)
+            .then(response => response.
